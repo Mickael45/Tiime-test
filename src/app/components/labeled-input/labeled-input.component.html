@@ -1,1 +1,11 @@
-<p>labeled-input works!</p>
+<div class="flex items-baseline justify-between">
+  <label class="block text-lg font-bold mb-2">{{ label }}</label>
+  <input
+    type="text"
+    class="w-1/2 border border-gray-300 rounded-lg p-2 mb-4 disabled:bg-gray-100 disabled:cursor-not-allowed"
+    [formControl]="control"
+  />
+  <small class="error" *ngIf="control.invalid && control.touched">
+    {{ getErrorMessage() }}
+  </small>
+</div>

@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { LabeledInputComponent } from '@components/labeled-input/labeled-input.component';
 
 @Component({
   selector: 'app-basic-info-form',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, LabeledInputComponent],
   templateUrl: './basic-info-form.component.html',
 })
 export class BasicInfoFormComponent {
