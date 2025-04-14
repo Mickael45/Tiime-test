@@ -1,1 +1,4 @@
-<p>user-form works!</p>
+<form [formGroup]="userForm">
+  <app-basic-info-form [form]="userForm.controls.basicInfo">
+  </app-basic-info-form>
+</form>

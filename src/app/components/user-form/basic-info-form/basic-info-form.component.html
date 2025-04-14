@@ -1,1 +1,69 @@
-<p>basic-info-form works!</p>
+<fieldset
+  class="w-full border border-gray-300 rounded-lg p-4 mb-4 shadow-lg"
+  [formGroup]="form"
+>
+  <legend class="text-xl">Basic Info</legend>
+
+  <div class="flex items-baseline justify-between">
+    <label htmlFor="name" class="block text-lg font-bold mb-2">Name</label>
+    <input
+      id="name"
+      class="w-1/2 border border-gray-300 rounded-lg p-2 mb-4 disabled:bg-gray-100 disabled:cursor-not-allowed"
+      formControlName="name"
+    />
+  </div>
+
+  <div class="flex items-baseline justify-between">
+    <label htmlFor="email" class="block text-lg font-bold mb-2">Email</label>
+    <input
+      id="email"
+      type="email"
+      class="w-1/2 border border-gray-300 rounded-lg p-2 mb-4 disabled:bg-gray-100 disabled:cursor-not-allowed"
+      formControlName="email"
+    />
+  </div>
+  <div class="flex items-baseline justify-between">
+    <label htmlFor="phone" class="block text-lg font-bold mb-2">Phone</label>
+    <input
+      id="phone"
+      type="tel"
+      class="w-1/2 border border-gray-300 rounded-lg p-2 mb-4 disabled:bg-gray-100 disabled:cursor-not-allowed"
+      formControlName="phone"
+    />
+  </div>
+
+  <div class="flex items-baseline justify-between">
+    <label htmlFor="username" class="block text-lg font-bold mb-2"
+      >Username</label
+    >
+    <input
+      id="username"
+      type="text"
+      class="w-1/2 border border-gray-300 rounded-lg p-2 mb-4 disabled:bg-gray-100 disabled:cursor-not-allowed"
+      formControlName="username"
+    />
+  </div>
+
+  <div class="flex items-baseline justify-between">
+    <label htmlFor="website" class="block text-lg font-bold mb-2"
+      >Website</label
+    >
+    <input
+      id="website"
+      type="text"
+      class="w-1/2 border border-gray-300 rounded-lg p-2 mb-4 disabled:bg-gray-100 disabled:cursor-not-allowed"
+      formControlName="website"
+    />
+  </div>
+  <div class="flex items-baseline justify-between">
+    <label htmlFor="website" class="block text-lg font-bold mb-2"
+      >Website</label
+    >
+    <input
+      id="website"
+      type="text"
+      class="w-1/2 border border-gray-300 rounded-lg p-2 mb-4 disabled:bg-gray-100 disabled:cursor-not-allowed"
+      formControlName="website"
+    />
+  </div>
+</fieldset>
