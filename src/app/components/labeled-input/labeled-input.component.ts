@@ -10,10 +10,6 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 export class LabeledInputComponent {
   @Input() label: string = '';
   @Input() control!: FormControl;
-
-  getErrorMessage(): string {
-    if (this.control.errors?.['required']) return 'This field is required.';
-    if (this.control.errors?.['email']) return 'Please enter a valid email.';
-    return 'Invalid value.';
-  }
+  @Input() type: string = 'text';
+  @Input() error: string = '';
 }

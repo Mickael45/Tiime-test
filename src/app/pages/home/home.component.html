@@ -1,1 +1,11 @@
+<button
+  class="bg-blue-500 text-white font-bold py-2 px-4 rounded-full"
+  (click)="modal.open()"
+>
+  Create New User
+</button>
+
+<app-user-creation-modal #modal title="Create New User">
+  <app-user-form (userCreated)="modal.close()" />
+</app-user-creation-modal>
 <app-user-list></app-user-list>
