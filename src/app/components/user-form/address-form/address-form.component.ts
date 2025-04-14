@@ -4,8 +4,5 @@ import { Component } from '@angular/core';
   selector: 'app-address-form',
   imports: [],
   templateUrl: './address-form.component.html',
-  styleUrl: './address-form.component.css'
 })
-export class AddressFormComponent {
-
-}
+export class AddressFormComponent {}

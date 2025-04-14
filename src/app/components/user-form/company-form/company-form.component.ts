@@ -4,8 +4,5 @@ import { Component } from '@angular/core';
   selector: 'app-company-form',
   imports: [],
   templateUrl: './company-form.component.html',
-  styleUrl: './company-form.component.css'
 })
-export class CompanyFormComponent {
-
-}
+export class CompanyFormComponent {}

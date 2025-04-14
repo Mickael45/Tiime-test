@@ -4,8 +4,5 @@ import { Component } from '@angular/core';
   selector: 'app-labeled-input',
   imports: [],
   templateUrl: './labeled-input.component.html',
-  styleUrl: './labeled-input.component.css'
 })
-export class LabeledInputComponent {
-
-}
+export class LabeledInputComponent {}
