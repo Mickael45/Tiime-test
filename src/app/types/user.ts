@@ -20,10 +20,10 @@ export type Company = {
 export type User = {
   id: number;
   name: string;
-  username: string;
   email: string;
-  address: Address;
+  username: string;
   phone: string;
   website: string;
+  address: Address;
   company: Company;
 };
