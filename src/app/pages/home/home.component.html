@@ -1,1 +1,10 @@
-<p>home works!</p>
+<span class="grid gap-5 my-5">
+  <button
+    class="bg-blue-500 text-white font-bold py-2 px-4 rounded-full last"
+    (click)="modal.open()"
+  >
+    Create New User
+  </button>
+  <app-user-creation-modal #modal> </app-user-creation-modal>
+  <app-user-list></app-user-list>
+</span>

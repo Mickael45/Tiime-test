@@ -1,0 +1,42 @@
+<fieldset
+  class="w-full border border-gray-300 rounded-lg p-4 mb-4 shadow-lg"
+  [formGroup]="form"
+>
+  <legend class="text-xl">Basic Info</legend>
+
+  <span class="grid gap-5">
+    <app-labeled-input
+      label="Name"
+      type="text"
+      [control]="form.controls.name"
+      [error]="getFieldError('name')"
+    ></app-labeled-input>
+
+    <app-labeled-input
+      label="Email"
+      type="email"
+      [control]="form.controls.email"
+      [error]="getFieldError('email')"
+    ></app-labeled-input>
+
+    <app-labeled-input
+      label="Phone"
+      type="tel"
+      [control]="form.controls.phone"
+      [error]="getFieldError('phone')"
+    ></app-labeled-input>
+
+    <app-labeled-input
+      label="Username"
+      type="text"
+      [control]="form.controls.username"
+    ></app-labeled-input>
+
+    <app-labeled-input
+      label="Website"
+      type="url"
+      [control]="form.controls.website"
+      [error]="getFieldError('website')"
+    ></app-labeled-input>
+  </span>
+</fieldset>

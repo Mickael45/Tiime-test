@@ -1,0 +1,26 @@
+<fieldset
+  class="w-full border border-gray-300 rounded-lg p-4 mb-4 shadow-lg"
+  [formGroup]="form"
+>
+  <legend class="text-xl">Company</legend>
+
+  <span class="grid gap-5">
+    <app-labeled-input
+      label="Name"
+      type="text"
+      [control]="form.controls.name"
+    ></app-labeled-input>
+
+    <app-labeled-input
+      label="Catchphrase"
+      type="text"
+      [control]="form.controls.catchPhrase"
+    ></app-labeled-input>
+
+    <app-labeled-input
+      label="Phone"
+      type="text"
+      [control]="form.controls.bs"
+    ></app-labeled-input>
+  </span>
+</fieldset>

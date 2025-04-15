@@ -1,1 +1,31 @@
-<p>user-form works!</p>
+<form [formGroup]="userForm">
+  <app-basic-info-fieldset [form]="userForm.controls.basicInfo">
+  </app-basic-info-fieldset>
+
+  <app-company-fieldset
+    [form]="userForm.controls.company"
+  ></app-company-fieldset>
+  <app-address-fieldset
+    [form]="userForm.controls.address"
+  ></app-address-fieldset>
+
+  @if (mode === 'create') {
+  <button
+    type="submit"
+    class="bg-blue-500 text-white font-bold py-2 px-4 rounded-full w-full disabled:bg-gray-300"
+    (click)="handleSubmit()"
+    [disabled]="userForm.invalid"
+  >
+    Create
+  </button>
+  } @else {
+  <button
+    type="submit"
+    class="bg-blue-500 text-white font-bold py-2 px-4 rounded-full w-full disabled:bg-gray-300"
+    (click)="handleSubmit()"
+    [disabled]="userForm.invalid"
+  >
+    Update
+  </button>
+  }
+</form>
