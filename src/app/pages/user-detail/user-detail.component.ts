@@ -6,11 +6,11 @@ import { UserService } from '@services/user.service';
 import { Post } from '@models/post';
 
 @Component({
-  selector: 'app-details',
+  selector: 'app-user-detail',
   imports: [UserFormComponent, PostCardComponent],
-  templateUrl: './details.component.html',
+  templateUrl: './user-detail.component.html',
 })
-export class DetailsComponent implements OnInit {
+export class UserDetailComponent implements OnInit {
   userService = inject(UserService);
   userId: string = '';
   user: User | null = null;
@@ -37,7 +37,6 @@ export class DetailsComponent implements OnInit {
   }
   updateUser(user: User) {
     this.userService.updateUser(user).subscribe((user) => {
-      console.log('User updated', user);
       this.user = user;
     });
   }

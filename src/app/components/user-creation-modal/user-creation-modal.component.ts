@@ -22,8 +22,7 @@ export class UserCreationModalComponent {
   }
 
   createUser(user: UnIdedUser) {
-    this.userService.createUser(user).subscribe((user) => {
-      console.log('User created', user);
+    this.userService.createUser(user).subscribe(() => {
       this.close();
     });
   }
