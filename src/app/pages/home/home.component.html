@@ -5,6 +5,7 @@
   >
     Create New User
   </button>
-  <app-user-creation-modal #modal> </app-user-creation-modal>
+  <app-user-creation-modal #modal (createUser)="createUser($event)">
+  </app-user-creation-modal>
   <app-user-list [users]="users"></app-user-list>
 </span>

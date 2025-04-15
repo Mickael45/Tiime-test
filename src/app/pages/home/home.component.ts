@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { UserCreationModalComponent } from '@components/user-creation-modal/user-creation-modal.component';
 import { UserListComponent } from '@components/user-list/user-list.component';
-import { User } from '@models/user';
+import { UnIdedUser, User } from '@models/user';
 import { UserService } from '@services/user.service';
 
 @Component({
@@ -15,6 +15,16 @@ export class HomeComponent {
   users: User[] = [];
 
   ngOnInit() {
+    this.getUsers();
+  }
+
+  createUser(user: UnIdedUser) {
+    this.userService.createUser(user).subscribe(() => {
+      this.getUsers();
+    });
+  }
+
+  getUsers() {
     this.userService.getUsers().subscribe((users) => {
       this.users = users;
     });
