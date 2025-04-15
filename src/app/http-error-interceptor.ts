@@ -1,38 +1,27 @@
-import { Injectable } from '@angular/core';
 import {
-  HttpEvent,
-  HttpInterceptor,
-  HttpHandler,
   HttpRequest,
+  HttpHandlerFn,
+  HttpEvent,
   HttpErrorResponse,
 } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { inject } from '@angular/core';
 import { ToastService } from '@services/toast.service';
+import { Observable, catchError } from 'rxjs';
 
-@Injectable()
-export class HttpInterceptorService implements HttpInterceptor {
-  constructor(private toastService: ToastService) {}
+export const htttpInterceptor = (
+  req: HttpRequest<unknown>,
+  next: HttpHandlerFn
+): Observable<HttpEvent<unknown>> => {
+  const toastService = inject(ToastService);
 
-  intercept(
-    req: HttpRequest<any>,
-    next: HttpHandler
-  ): Observable<HttpEvent<any>> {
-    return next.handle(req).pipe(
-      catchError((error: HttpErrorResponse) => {
-        if (error.status >= 400 && error.status < 500) {
-          this.toastService.showToast(
-            'Client Error: ' + error.message,
-            'error'
-          );
-        } else if (error.status >= 500) {
-          this.toastService.showToast(
-            'Server Error: ' + error.message,
-            'error'
-          );
-        }
-        throw error;
-      })
-    );
-  }
-}
+  return next(req).pipe(
+    catchError((error: HttpErrorResponse) => {
+      if (error.status >= 400 && error.status < 500) {
+        toastService.showToast('Client Error: ' + error.message, 'error');
+      } else if (error.status >= 500) {
+        toastService.showToast('Server Error: ' + error.message, 'error');
+      }
+      throw error;
+    })
+  );
+};
