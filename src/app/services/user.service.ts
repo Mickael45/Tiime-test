@@ -7,7 +7,7 @@ import { isPost } from './post.guards';
 import { Post } from '@models/post';
 import { ToastService } from './toast.service';
 
-const API_URL = 'https://tiime-test.vercel.app//api/users';
+const API_URL = 'https://tiime-test.vercel.app/users';
 
 @Injectable({
   providedIn: 'root',
