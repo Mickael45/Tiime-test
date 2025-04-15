@@ -1,3 +1,8 @@
 @for (user of users; track user.id) {
-<div>{{ user.name }}</div>
+<app-user-card
+  [name]="user.name"
+  [username]="user.username"
+  [email]="user.email"
+  [company]="user.company.name"
+></app-user-card>
 }
