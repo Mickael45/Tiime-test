@@ -32,7 +32,6 @@ export class BasicInfoFieldsetComponent {
     const field = this.form.get(fieldName);
 
     if (field?.invalid && field.errors) {
-      console.log(mapFieldNameToErrorMessage[fieldName]);
       return mapFieldNameToErrorMessage[fieldName];
     }
     return '';
