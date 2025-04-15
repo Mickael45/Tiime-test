@@ -2,7 +2,7 @@
 import https from "https";
 import fs from "fs";
 
-const USERS_FILE = "./db.json";
+const USERS_FILE = "./users.json";
 
 // Basic fetch wrapper for JSONPlaceholder
 function fetchFromPlaceholder(path, method = "GET", data = null) {
@@ -78,6 +78,14 @@ function sendJSON(res, statusCode, data) {
 // Vercel Serverless Function Handler
 export default async function handler(req, res) {
   const { method, query, body } = req;
+
+  // Handle OPTIONS request (preflight)
+  if (method === "OPTIONS") {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    return res.status(204).end(); // No content response
+  }
 
   // Handle GET /users
   if (method === "GET" && query.userId === undefined) {
