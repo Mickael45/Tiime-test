@@ -2,7 +2,7 @@
 import https from "https";
 import fs from "fs";
 
-const USERS_FILE = "./users.json";
+const USERS_FILE = "./db.json";
 
 // Basic fetch wrapper for JSONPlaceholder
 function fetchFromPlaceholder(path, method = "GET", data = null) {
