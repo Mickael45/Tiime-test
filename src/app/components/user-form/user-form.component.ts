@@ -5,9 +5,11 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { BasicInfoFormComponent } from './basic-info-form/basic-info-form.component';
 import { CommonModule } from '@angular/common';
-import { Address, Company, User } from '@models/user';
+import { Company, User } from '@models/user';
+import { BasicInfoFieldsetComponent } from './basic-info-fieldset/basic-info-fieldset.component';
+import { CompanyFieldsetComponent } from './company-fieldset/company-fieldset.component';
+import { AddressFieldsetComponent } from './address-fieldset/address-fieldset.component';
 
 type BasicInfo = {
   name: string;
@@ -15,6 +17,15 @@ type BasicInfo = {
   username: string;
   phone: string;
   website: string;
+};
+
+type Address = {
+  street: string;
+  suite: string;
+  city: string;
+  zipcode: string;
+  lat: string;
+  lng: string;
 };
 
 type UserFormGroup = {
@@ -28,14 +39,26 @@ const fromFormToUser = (formValue: UserFormGroup): Omit<User, 'id'> => {
 
   return {
     ...basicInfo,
-    address,
+    address: {
+      ...address,
+      geo: {
+        lat: address.lat,
+        lng: address.lng,
+      },
+    },
     company,
   };
 };
 
 @Component({
   selector: 'app-user-form',
-  imports: [BasicInfoFormComponent, CommonModule, ReactiveFormsModule],
+  imports: [
+    BasicInfoFieldsetComponent,
+    CompanyFieldsetComponent,
+    AddressFieldsetComponent,
+    CommonModule,
+    ReactiveFormsModule,
+  ],
   templateUrl: './user-form.component.html',
 })
 export class UserFormComponent {
@@ -67,10 +90,8 @@ export class UserFormComponent {
       suite: new FormControl('', { nonNullable: true }),
       city: new FormControl('', { nonNullable: true }),
       zipcode: new FormControl('', { nonNullable: true }),
-      geo: new FormGroup({
-        lat: new FormControl('', { nonNullable: true }),
-        lng: new FormControl('', { nonNullable: true }),
-      }),
+      lat: new FormControl('', { nonNullable: true }),
+      lng: new FormControl('', { nonNullable: true }),
     }),
     company: new FormGroup({
       name: new FormControl('', { nonNullable: true }),

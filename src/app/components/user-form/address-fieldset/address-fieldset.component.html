@@ -1,0 +1,44 @@
+<fieldset
+  class="w-full border border-gray-300 rounded-lg p-4 mb-4 shadow-lg"
+  [formGroup]="form"
+>
+  <legend class="text-xl">Address</legend>
+
+  <span class="grid gap-5">
+    <app-labeled-input
+      label="Street"
+      type="text"
+      [control]="form.controls.street"
+    ></app-labeled-input>
+
+    <app-labeled-input
+      label="Suite"
+      type="text"
+      [control]="form.controls.suite"
+    ></app-labeled-input>
+
+    <app-labeled-input
+      label="City"
+      type="text"
+      [control]="form.controls.city"
+    ></app-labeled-input>
+
+    <app-labeled-input
+      label="Zipcode"
+      type="number"
+      [control]="form.controls.zipcode"
+    ></app-labeled-input>
+
+    <app-labeled-input
+      label="Latitude"
+      type="number"
+      [control]="form.controls.lat"
+    ></app-labeled-input>
+
+    <app-labeled-input
+      label="Longitude"
+      type="number"
+      [control]="form.controls.lng"
+    ></app-labeled-input>
+  </span>
+</fieldset>

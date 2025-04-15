@@ -12,6 +12,7 @@ export class UserCreationModalComponent {
   @Input() title: string = '';
 
   open() {
+    console.log('Opening');
     this.modalRef.nativeElement.showModal();
   }
 

@@ -1,23 +1,20 @@
-<dialog
-  #modalRef
-  class="w-full max-w-lg rounded-2xl shadow-xl border border-gray-300 p-0"
->
-  <div class="flex items-center justify-between px-6 py-4">
-    <div class="flex-1 text-center text-lg font-semibold">Create User</div>
+<dialog #modalRef>
+  <div class="flex justify-between items-center px-6 py-4">
+    <h2 class="text-lg font-semibold text-center flex-1">Modal Title</h2>
     <button
       (click)="close()"
-      aria-label="Close"
-      class="text-gray-500 hover:text-gray-800"
+      aria-label="Close modal"
+      class="text-gray-400 hover:text-gray-600 transition"
     >
-      X
+      ✕
     </button>
   </div>
 
-  <div class="border-t border-gray-200"></div>
+  <hr class="border-gray-200" />
 
-  <div class="px-6 py-4">
+  <div class="w-full px-6 py-4">
     <app-user-form (onSubmit)="createUser($event)"></app-user-form>
   </div>
 
-  <div class="border-t border-gray-200"></div>
+  <hr class="border-gray-200" />
 </dialog>

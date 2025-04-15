@@ -1,6 +1,13 @@
 <form [formGroup]="userForm">
-  <app-basic-info-form [form]="userForm.controls.basicInfo">
-  </app-basic-info-form>
+  <app-basic-info-fieldset [form]="userForm.controls.basicInfo">
+  </app-basic-info-fieldset>
+
+  <app-company-fieldset
+    [form]="userForm.controls.company"
+  ></app-company-fieldset>
+  <app-address-fieldset
+    [form]="userForm.controls.address"
+  ></app-address-fieldset>
 
   @if (mode === 'create') {
   <button

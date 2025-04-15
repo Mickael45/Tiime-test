@@ -15,17 +15,17 @@ const mapFieldNameToErrorMessage: Record<FieldToCheck, string> = {
 };
 
 @Component({
-  selector: 'app-basic-info-form',
+  selector: 'app-basic-info-fieldset',
   imports: [CommonModule, ReactiveFormsModule, LabeledInputComponent],
-  templateUrl: './basic-info-form.component.html',
+  templateUrl: './basic-info-fieldset.component.html',
 })
-export class BasicInfoFormComponent {
+export class BasicInfoFieldsetComponent {
   @Input({ required: true }) form!: FormGroup<{
-    name: FormControl<string | null>;
-    email: FormControl<string | null>;
-    username: FormControl<string | null>;
-    phone: FormControl<string | null>;
-    website: FormControl<string | null>;
+    name: FormControl<string>;
+    email: FormControl<string>;
+    username: FormControl<string>;
+    phone: FormControl<string>;
+    website: FormControl<string>;
   }>;
 
   getFieldError(fieldName: FieldToCheck): string {
