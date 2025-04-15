@@ -8,7 +8,7 @@ import { Post } from '@models/post';
 import { ToastService } from './toast.service';
 
 const API_URL =
-  'https://vercel.com/mickael45s-projects/tiime-test/HcgVzJKMfSvdTePMuZtkDrpvuiMe/api/users';
+  'https://vercel.com/mickael45s-projects/tiime-test/HcgVzJKMfSvdTePMuZtkDrpvuiMe.vercel.app/api/users';
 
 @Injectable({
   providedIn: 'root',
