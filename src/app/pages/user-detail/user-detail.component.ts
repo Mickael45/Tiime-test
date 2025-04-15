@@ -38,6 +38,7 @@ export class UserDetailComponent implements OnInit {
   updateUser(user: User) {
     this.userService.updateUser(user).subscribe((user) => {
       this.user = user;
+      this.getUserById(this.userId);
     });
   }
 }
