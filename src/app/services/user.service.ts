@@ -1,8 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { User } from '@models/user';
+import { UnIdedUser, User } from '@models/user';
 import { map, Observable } from 'rxjs';
 import { isUser } from './user.guards';
+import { isPost } from './post.guards';
+import { Post } from '@models/post';
 
 const API_URL = 'https://jsonplaceholder.typicode.com/users';
 
@@ -22,5 +24,35 @@ export class UserService {
             .filter((user) => user !== null)
         )
       );
+  }
+
+  getUserById(id: string): Observable<User | null> {
+    return this.http
+      .get<User>(`${API_URL}/${id}`)
+      .pipe(map((user) => (isUser(user) ? user : null)));
+  }
+
+  getPosts(userId: string): Observable<Post[]> {
+    return this.http
+      .get<Post[]>(`${API_URL}/${userId}/posts`)
+      .pipe(
+        map((posts) =>
+          posts
+            .map((post) => (isPost(post) ? post : null))
+            .filter((user) => user !== null)
+        )
+      );
+  }
+
+  createUser(user: UnIdedUser): Observable<User | null> {
+    return this.http
+      .post<User>(API_URL, user)
+      .pipe(map((user) => (isUser(user) ? user : null)));
+  }
+
+  updateUser(user: User): Observable<User | null> {
+    return this.http
+      .put<User>(`${API_URL}/${user.id}`, user)
+      .pipe(map((user) => (isUser(user) ? user : null)));
   }
 }

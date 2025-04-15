@@ -27,3 +27,5 @@ export type User = {
   address: Address;
   company: Company;
 };
+
+export type UnIdedUser = Omit<User, 'id'>;

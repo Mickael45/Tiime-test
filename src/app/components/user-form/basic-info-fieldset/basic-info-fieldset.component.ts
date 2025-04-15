@@ -31,7 +31,8 @@ export class BasicInfoFieldsetComponent {
   getFieldError(fieldName: FieldToCheck): string {
     const field = this.form.get(fieldName);
 
-    if (field?.invalid && field.touched && field.errors) {
+    if (field?.invalid && field.errors) {
+      console.log(mapFieldNameToErrorMessage[fieldName]);
       return mapFieldNameToErrorMessage[fieldName];
     }
     return '';

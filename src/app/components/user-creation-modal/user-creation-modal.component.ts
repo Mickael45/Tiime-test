@@ -1,6 +1,7 @@
-import { Component, ElementRef, Input, ViewChild } from '@angular/core';
+import { Component, ElementRef, inject, Input, ViewChild } from '@angular/core';
 import { UserFormComponent } from '@components/user-form/user-form.component';
-import { User } from '@models/user';
+import { UnIdedUser } from '@models/user';
+import { UserService } from '@services/user.service';
 
 @Component({
   selector: 'app-user-creation-modal',
@@ -8,11 +9,11 @@ import { User } from '@models/user';
   templateUrl: './user-creation-modal.component.html',
 })
 export class UserCreationModalComponent {
+  userService = inject(UserService);
   @ViewChild('modalRef') modalRef!: ElementRef<HTMLDialogElement>;
   @Input() title: string = '';
 
   open() {
-    console.log('Opening');
     this.modalRef.nativeElement.showModal();
   }
 
@@ -20,8 +21,10 @@ export class UserCreationModalComponent {
     this.modalRef.nativeElement.close();
   }
 
-  createUser(user: Omit<User, 'id'>) {
-    console.log('User created', user);
-    this.close();
+  createUser(user: UnIdedUser) {
+    this.userService.createUser(user).subscribe((user) => {
+      console.log('User created', user);
+      this.close();
+    });
   }
 }
