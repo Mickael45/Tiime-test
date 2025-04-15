@@ -6,6 +6,7 @@ import { UserService } from '@services/user.service';
 
 @Component({
   selector: 'app-home',
+  standalone: true,
   imports: [UserListComponent, UserCreationModalComponent],
   templateUrl: './home.component.html',
 })

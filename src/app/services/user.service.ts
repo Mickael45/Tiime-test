@@ -1,10 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { UnIdedUser, User } from '@models/user';
-import { map, Observable } from 'rxjs';
+import { map, Observable, tap } from 'rxjs';
 import { isUser } from './user.guards';
 import { isPost } from './post.guards';
 import { Post } from '@models/post';
+import { ToastService } from './toast.service';
 
 const API_URL = 'https://jsonplaceholder.typicode.com/users';
 
@@ -12,7 +13,7 @@ const API_URL = 'https://jsonplaceholder.typicode.com/users';
   providedIn: 'root',
 })
 export class UserService {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private toast: ToastService) {}
 
   getUsers(): Observable<User[]> {
     return this.http
@@ -47,12 +48,22 @@ export class UserService {
   createUser(user: UnIdedUser): Observable<User | null> {
     return this.http
       .post<User>(API_URL, user)
-      .pipe(map((user) => (isUser(user) ? user : null)));
+      .pipe(map((user) => (isUser(user) ? user : null)))
+      .pipe(
+        tap(() => {
+          this.toast.showToast('User Created', 'success');
+        })
+      );
   }
 
   updateUser(user: User): Observable<User | null> {
     return this.http
       .put<User>(`${API_URL}/${user.id}`, user)
-      .pipe(map((user) => (isUser(user) ? user : null)));
+      .pipe(map((user) => (isUser(user) ? user : null)))
+      .pipe(
+        tap(() => {
+          this.toast.showToast('User Updated!', 'success');
+        })
+      );
   }
 }
