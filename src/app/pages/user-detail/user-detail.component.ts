@@ -4,13 +4,22 @@ import { PostCardComponent } from '@components/post-card/post-card.component';
 import { User } from '@models/user';
 import { UserService } from '@services/user.service';
 import { Post } from '@models/post';
+import { PostCardShadowComponent } from '@components/post-card/post-card-shadow.component';
+import { UserFormShadowComponent } from '@components/user-form/user-form-shadow.component';
 
 @Component({
   selector: 'app-user-detail',
-  imports: [UserFormComponent, PostCardComponent],
+  imports: [
+    UserFormComponent,
+    PostCardComponent,
+    PostCardShadowComponent,
+    UserFormShadowComponent,
+  ],
   templateUrl: './user-detail.component.html',
 })
 export class UserDetailComponent implements OnInit {
+  arePostsLoading: boolean = false;
+  isUserLoading: boolean = false;
   userService = inject(UserService);
   userId: string = '';
   user: User | null = null;
@@ -25,14 +34,18 @@ export class UserDetailComponent implements OnInit {
   }
 
   getPosts(userId: string) {
+    this.arePostsLoading = true;
     this.userService.getPosts(userId).subscribe((posts) => {
       this.posts = posts;
+      this.arePostsLoading = false;
     });
   }
 
   getUserById(userId: string) {
+    this.isUserLoading = true;
     this.userService.getUserById(userId).subscribe((user) => {
       this.user = user;
+      this.isUserLoading = false;
     });
   }
   updateUser(user: User) {

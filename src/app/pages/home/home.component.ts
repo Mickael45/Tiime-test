@@ -11,6 +11,7 @@ import { UserService } from '@services/user.service';
   templateUrl: './home.component.html',
 })
 export class HomeComponent {
+  areUsersLoading: boolean = false;
   userService = inject(UserService);
   users: User[] = [];
 
@@ -25,8 +26,11 @@ export class HomeComponent {
   }
 
   getUsers() {
+    this.areUsersLoading = true;
     this.userService.getUsers().subscribe((users) => {
       this.users = users;
+      this.areUsersLoading = false;
+      console.log(this.areUsersLoading);
     });
   }
 }

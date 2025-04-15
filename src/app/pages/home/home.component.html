@@ -7,5 +7,5 @@
   </button>
   <app-user-creation-modal #modal (createUser)="createUser($event)">
   </app-user-creation-modal>
-  <app-user-list [users]="users"></app-user-list>
+  <app-user-list [users]="users" [isLoading]="areUsersLoading"></app-user-list>
 </span>
