@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -6,7 +6,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Company, User } from '@models/user';
+import { Company, UnIdedUser, User } from '@models/user';
 import { BasicInfoFieldsetComponent } from './basic-info-fieldset/basic-info-fieldset.component';
 import { CompanyFieldsetComponent } from './company-fieldset/company-fieldset.component';
 import { AddressFieldsetComponent } from './address-fieldset/address-fieldset.component';
@@ -34,16 +34,17 @@ type UserFormGroup = {
   company: Company;
 };
 
-const fromFormToUser = (formValue: UserFormGroup): Omit<User, 'id'> => {
+const fromFormToUser = (formValue: UserFormGroup): UnIdedUser => {
   const { basicInfo, address, company } = formValue;
+  const { lat, lng, ...addressWithoutGeo } = address;
 
   return {
     ...basicInfo,
     address: {
-      ...address,
+      ...addressWithoutGeo,
       geo: {
-        lat: address.lat,
-        lng: address.lng,
+        lat,
+        lng,
       },
     },
     company,
@@ -61,9 +62,11 @@ const fromFormToUser = (formValue: UserFormGroup): Omit<User, 'id'> => {
   ],
   templateUrl: './user-form.component.html',
 })
-export class UserFormComponent {
+export class UserFormComponent implements OnInit {
   @Input() mode: 'create' | 'edit' = 'create';
-  @Output() onSubmit = new EventEmitter<Omit<User, 'id'>>();
+  @Input() user!: User;
+  @Output() createUser = new EventEmitter<UnIdedUser>();
+  @Output() updateUser = new EventEmitter<User>();
 
   userForm = new FormGroup({
     basicInfo: new FormGroup({
@@ -100,7 +103,68 @@ export class UserFormComponent {
     }),
   });
 
+  ngOnInit() {
+    if (this.user) {
+      this.userForm.patchValue({
+        basicInfo: {
+          name: this.user.name,
+          email: this.user.email,
+          username: this.user.username,
+          phone: this.user.phone,
+          website: this.user.website,
+        },
+        address: {
+          street: this.user.address.street,
+          suite: this.user.address.suite,
+          city: this.user.address.city,
+          zipcode: this.user.address.zipcode,
+          lat: this.user.address.geo.lat,
+          lng: this.user.address.geo.lng,
+        },
+        company: {
+          name: this.user.company.name,
+          catchPhrase: this.user.company.catchPhrase,
+          bs: this.user.company.bs,
+        },
+      });
+    }
+  }
+
+  get isFormDifferent(): boolean {
+    if (this.mode === 'create') return false;
+
+    const { basicInfo, address, company } = this.userForm.getRawValue();
+    const { name, email, username, phone, website } = this.user;
+    const { street, suite, city, zipcode } = this.user.address;
+    const { lat, lng } = this.user.address.geo;
+    const { name: companyName, catchPhrase, bs } = this.user.company;
+
+    return (
+      basicInfo.name !== name ||
+      basicInfo.email !== email ||
+      basicInfo.username !== username ||
+      basicInfo.phone !== phone ||
+      basicInfo.website !== website ||
+      address.street !== street ||
+      address.suite !== suite ||
+      address.city !== city ||
+      address.zipcode !== zipcode ||
+      address.lat !== lat ||
+      address.lng !== lng ||
+      company.name !== companyName ||
+      company.catchPhrase !== catchPhrase ||
+      company.bs !== bs
+    );
+  }
+
   handleSubmit() {
-    this.onSubmit.emit(fromFormToUser(this.userForm.getRawValue()));
+    if (this.mode === 'create') {
+      this.createUser.emit(fromFormToUser(this.userForm.getRawValue()));
+      return;
+    }
+    this.updateUser.emit({
+      ...fromFormToUser(this.userForm.getRawValue()),
+      id: this.user.id,
+    });
   }
 }
