@@ -1,12 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-user-card',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './user-card.component.html',
 })
 export class UserCardComponent {
+  @Input() id!: number;
   @Input() name: string = '';
   @Input() username: string = '';
   @Input() email: string = '';
