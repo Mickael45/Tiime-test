@@ -7,7 +7,8 @@ import { isPost } from './post.guards';
 import { Post } from '@models/post';
 import { ToastService } from './toast.service';
 
-const API_URL = 'https://jsonplaceholder.typicode.com/users';
+const API_URL =
+  'https://vercel.com/mickael45s-projects/tiime-test/HcgVzJKMfSvdTePMuZtkDrpvuiMe/api/users';
 
 @Injectable({
   providedIn: 'root',
