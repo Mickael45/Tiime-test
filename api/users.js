@@ -68,6 +68,10 @@ function updateUser(updatedUser) {
 
 // CORS & response helper
 function sendJSON(res, statusCode, data) {
+  res.setHeader("Access-Control-Allow-Origin", "*"); // Allow all origins
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
   res.status(statusCode).json(data);
 }
 
