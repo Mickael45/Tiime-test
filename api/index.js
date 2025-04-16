@@ -1,184 +1,256 @@
-// api/users.js
-import https from "https";
-import fs from "fs";
+// server.js (Express version)
+const express = require("express");
+const fs = require("fs").promises;
+const path = require("path");
+const cors = require("cors");
 
-const USERS_FILE = "./users.json";
+const usersFilePath = path.join(__dirname, "users.json");
+const PORT = process.env.PORT || 3000;
+const JSONPLACEHOLDER_API = "https://jsonplaceholder.typicode.com";
 
-// Basic fetch wrapper for JSONPlaceholder
-function fetchFromPlaceholder(path, method = "GET", data = null) {
-  return new Promise((resolve, reject) => {
-    const options = {
-      hostname: "jsonplaceholder.typicode.com",
-      path,
-      method,
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
+const app = express();
 
-    const req = https.request(options, (res) => {
-      let body = "";
-      res.on("data", (chunk) => (body += chunk));
-      res.on("end", () => {
-        if (res.statusCode >= 200 && res.statusCode < 300) {
-          try {
-            const parsed = JSON.parse(body);
-            resolve(parsed);
-          } catch (err) {
-            resolve(null); // fallback to local if JSON is broken
-          }
-        } else {
-          resolve(null); // means not found or bad response
-        }
-      });
-    });
+// Middleware to enable CORS
+app.use(cors());
 
-    req.on("error", reject);
-    if (data) req.write(JSON.stringify(data));
-    req.end();
-  });
-}
+// Middleware to parse JSON request bodies
+app.use(express.json());
 
-// File operations
-function readUsers() {
-  if (!fs.existsSync(USERS_FILE)) fs.writeFileSync(USERS_FILE, "[]");
-  return JSON.parse(fs.readFileSync(USERS_FILE));
-}
+// --- Data Persistence Helpers ---
 
-function writeUsers(users) {
-  fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2));
-}
+// In-memory cache of users to avoid reading the file on every request
+let usersCache = [];
 
-function syncUser(user) {
-  const users = readUsers();
-  const exists = users.find((u) => u.id === user.id);
-  if (!exists) {
-    users.push(user);
-    writeUsers(users);
-  }
-}
-
-function updateUser(updatedUser) {
-  let users = readUsers();
-  users = users.map((user) =>
-    user.id === updatedUser.id ? updatedUser : user
-  );
-  writeUsers(users);
-}
-
-// CORS & response helper
-function sendJSON(res, statusCode, data) {
-  res.setHeader("Access-Control-Allow-Origin", "*"); // Allow all origins
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-
-  res.status(statusCode).json(data);
-}
-
-// Vercel Serverless Function Handler
-export default async function handler(req, res) {
-  const { method, query, body } = req;
-
-  // Handle OPTIONS request (preflight)
-  if (method === "OPTIONS") {
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, OPTIONS");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-    return res.status(204).end(); // No content response
-  }
-
-  // Handle GET /users
-  if (method === "GET" && query.userId === undefined) {
+// Function to read users from the JSON file
+async function readUsers() {
+  try {
+    // Check if file exists, create if not
     try {
-      const remoteUsers = await fetchFromPlaceholder("/users");
-      remoteUsers.forEach(syncUser);
-      const localUsers = readUsers();
-      return sendJSON(res, 200, localUsers);
-    } catch (err) {
-      return sendJSON(res, 500, { error: "Failed to fetch users" });
+      await fs.access(usersFilePath);
+    } catch (error) {
+      if (error.code === "ENOENT") {
+        console.log("users.json not found, creating empty file.");
+        await fs.writeFile(usersFilePath, "[]", "utf8");
+      } else {
+        throw error; // Re-throw other access errors
+      }
     }
-  }
-
-  // POST /users
-  if (method === "POST" && query.userId === undefined) {
-    try {
-      const newUser = JSON.parse(body);
-      const localUsers = readUsers();
-      const createdUser = { id: localUsers.length, ...newUser };
-
-      syncUser(createdUser);
-      return sendJSON(res, 201, createdUser);
-    } catch (err) {
-      return sendJSON(res, 500, { error: "Failed to create user" });
-    }
-  }
-
-  // PUT /users/:id
-  if (method === "PUT" && query.userId) {
-    try {
-      const userId = query.userId;
-      const updatedData = JSON.parse(body);
-      const updatedUser = await fetchFromPlaceholder(
-        `/users/${userId}`,
-        "PUT",
-        updatedData
+    const data = await fs.readFile(usersFilePath, "utf8");
+    usersCache = JSON.parse(data);
+    // Ensure it's always an array
+    if (!Array.isArray(usersCache)) {
+      console.warn(
+        "users.json did not contain a valid array. Resetting to []."
       );
-
-      if (updatedUser && updatedUser.id) {
-        updateUser(updatedUser);
-        return sendJSON(res, 200, updatedUser);
-      } else {
-        throw new Error("User not found remotely");
-      }
-    } catch (err) {
-      // fallback: try local update
-      let users = readUsers();
-      const index = users.findIndex((u) => u.id == query.userId);
-
-      if (index !== -1) {
-        users[index] = { ...users[index], ...JSON.parse(body) };
-        writeUsers(users);
-        return sendJSON(res, 200, users[index]);
-      } else {
-        return sendJSON(res, 404, { error: "User not found" });
-      }
+      usersCache = [];
+      await writeUsers(); // Write back the empty array
     }
+    return usersCache;
+  } catch (err) {
+    console.error("Error reading users file:", err);
+    // If reading fails critically, maybe default to an empty array in memory
+    usersCache = [];
+    return usersCache;
+    // Or throw an error to stop the server if preferred
+    // throw new Error("Could not read user data file.");
   }
-
-  // GET /users/:id
-  if (method === "GET" && query.userId) {
-    const userId = query.userId;
-    try {
-      const remoteUser = await fetchFromPlaceholder(`/users/${userId}`);
-      if (remoteUser && remoteUser.id) {
-        syncUser(remoteUser); // Save to local if not already there
-        return sendJSON(res, 200, remoteUser);
-      } else {
-        throw new Error("User not found remotely");
-      }
-    } catch (err) {
-      // fallback to local
-      const localUsers = readUsers();
-      const localUser = localUsers.find((u) => u.id == userId);
-      if (localUser) {
-        return sendJSON(res, 200, localUser);
-      } else {
-        return sendJSON(res, 404, { error: "User not found" });
-      }
-    }
-  }
-
-  // GET /users/:id/posts
-  if (method === "GET" && query.userId && query.posts) {
-    const userId = query.userId;
-    try {
-      const posts = await fetchFromPlaceholder(`/users/${userId}/posts`);
-      return sendJSON(res, 200, posts);
-    } catch (err) {
-      return sendJSON(res, 500, { error: "Failed to fetch posts" });
-    }
-  }
-
-  // 404 fallback
-  return sendJSON(res, 404, { error: "Route not found" });
 }
+
+// Function to write users back to the JSON file
+async function writeUsers() {
+  try {
+    await fs.writeFile(
+      usersFilePath,
+      JSON.stringify(usersCache, null, 2),
+      "utf8"
+    ); // Pretty print JSON
+  } catch (err) {
+    console.error("Error writing users file:", err);
+    throw new Error("Could not write user data file."); // Propagate error
+  }
+}
+
+// --- Route Handlers ---
+
+// Route: GET /users
+app.get("/users", (req, res) => {
+  console.log(`Received request: GET /users`);
+  res.status(200).json(usersCache); // Send cached users
+});
+
+// Route: GET /user/:id
+app.get("/users/:id", (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  console.log(`Received request: GET /user/${id}`);
+  const user = usersCache.find((u) => u.id === id);
+  if (user) {
+    res.status(200).json(user);
+  } else {
+    res.status(404).json({ message: `User with ID ${id} not found locally` });
+  }
+});
+
+// Route: POST /user
+app.post("/users", async (req, res) => {
+  console.log(`Received request: POST /user`);
+  const newUser = req.body;
+
+  // Basic validation
+  if (!newUser || typeof newUser !== "object" || Array.isArray(newUser)) {
+    return res
+      .status(400)
+      .json({ message: "Invalid user data format in request body." });
+  }
+  // Check if required fields are present (optional, add as needed)
+  // if (!newUser.name || !newUser.email) {
+  //     return res.status(400).json({ message: 'Missing required fields (e.g., name, email).' });
+  // }
+
+  // Generate a new unique ID
+  const maxId = usersCache.reduce((max, u) => (u.id > max ? u.id : max), 0);
+  newUser.id = maxId + 1;
+
+  // Add to cache and write to file
+  usersCache.push(newUser);
+  try {
+    await writeUsers();
+    res.status(201).json(newUser); // 201 Created
+  } catch (error) {
+    console.error("Error writing user:", error);
+    res.status(500).json({ message: "Failed to save new user." });
+  }
+});
+
+// Route: PUT /user/:id
+app.put("/users/:id", async (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  console.log(`Received request: PUT /user/${id}`);
+  const userIndex = usersCache.findIndex((u) => u.id === id);
+
+  if (userIndex === -1) {
+    return res
+      .status(404)
+      .json({ message: `User with ID ${id} not found locally for update` });
+  }
+
+  const updatedData = req.body;
+
+  // Basic validation
+  if (
+    !updatedData ||
+    typeof updatedData !== "object" ||
+    Array.isArray(updatedData)
+  ) {
+    return res
+      .status(400)
+      .json({ message: "Invalid user data format in request body." });
+  }
+
+  // Merge updated data - ensure ID remains the same
+  usersCache[userIndex] = { ...usersCache[userIndex], ...updatedData, id: id };
+
+  // Write changes to file
+  try {
+    await writeUsers();
+    res.status(200).json(usersCache[userIndex]);
+  } catch (error) {
+    console.error("Error updating user:", error);
+    res.status(500).json({ message: "Failed to update user." });
+  }
+});
+
+// Route: GET /user/:id/posts
+app.get("/users/:id/posts", async (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  console.log(`Received request: GET /user/${id}/posts`);
+  const url = `${JSONPLACEHOLDER_API}/users/${id}/posts`;
+
+  console.log(`Workspaceing posts from: ${url}`);
+  try {
+    // Use native fetch (available in Node 18+)
+    const response = await fetch(url);
+
+    if (response.ok) {
+      // Status code 200-299
+      const posts = await response.json();
+      res.status(200).json(posts);
+    } else if (response.status === 404) {
+      console.log(
+        `User ${id} not found on JSONPlaceholder. Checking local storage...`
+      );
+      // JSONPlaceholder returned 404, check if user exists locally
+      const localUserExists = usersCache.some((u) => u.id === id);
+      if (localUserExists) {
+        console.log(`User ${id} found locally. Returning empty posts array.`);
+        // User exists locally, but no posts on placeholder - return empty array
+        res.status(200).json([]);
+      } else {
+        console.log(`User ${id} not found locally either.`);
+        // User not found locally either, return 404
+        res.status(404).json({
+          message: `User with ID ${id} not found locally or on JSONPlaceholder`,
+        });
+      }
+    } else {
+      // Other error from JSONPlaceholder
+      console.error(
+        `JSONPlaceholder request failed: ${response.status} ${response.statusText}`
+      );
+      res
+        .status(response.status)
+        .json({ message: `Failed to fetch posts: ${response.statusText}` });
+    }
+  } catch (fetchError) {
+    console.error("Error fetching posts:", fetchError);
+    // Check local existence even on fetch network errors
+    const localUserExists = usersCache.some((u) => u.id === id);
+    if (localUserExists) {
+      console.log(
+        `Workspace failed, but User ${id} found locally. Returning empty posts array.`
+      );
+      // Return empty array if user exists locally but fetch failed
+      res.status(200).json([]);
+    } else {
+      console.log(`Workspace failed and User ${id} not found locally either.`);
+      res
+        .status(500)
+        .json({ message: "Failed to fetch posts and user not found locally" });
+    }
+  }
+});
+
+// Route: Not Found
+app.use((req, res) => {
+  console.log(`Received request: ${req.method} ${req.path} - Route not found`);
+  res.status(404).json({ message: "Route not found" });
+});
+
+// --- Start Server ---
+
+// Load initial data before starting the server
+readUsers()
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`Server running on http://localhost:${PORT}`);
+      console.log(`User data will be persisted in: ${usersFilePath}`);
+    });
+  })
+  .catch((err) => {
+    console.error("Failed to initialize server:", err);
+    process.exit(1); // Exit if we can't load initial data
+  });
+
+// Optional: Handle graceful shutdown to ensure data is written
+process.on("SIGINT", async () => {
+  console.log("\nCaught interrupt signal, writing data before exit...");
+  try {
+    await writeUsers(); // Ensure latest cache is written
+    console.log("Data saved successfully.");
+    process.exit(0);
+  } catch (err) {
+    console.error("Failed to save data on exit:", err);
+    process.exit(1);
+  }
+});
+
+module.exports = app;
