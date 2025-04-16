@@ -1,59 +1,49 @@
-# TiimeTest
+# Tiime Test
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.7.
+## 🛠️ Outils utilisés
 
-## Development server
+**Tailwind** : Pendant mon call avec Sullivan, il a mentionné que vous utilisiez Tailwind, donc c’est ce que j’ai utilisé pour le projet.
 
-To start a local development server, run:
+Le reste a été fait à la main, sans bibliothèques externes.
 
-```bash
-ng serve
-```
+---
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## 📌 Remarque
 
-## Code scaffolding
+L’API proposée par [jsonplaceholder.typicode.com](https://jsonplaceholder.typicode.com) n’est composée que de données en dur. Du coup, la création ou la mise à jour d’un utilisateur ne sont pas enregistrées.
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+Pour pallier ça, j’ai créé un petit serveur Express qui sert de wrapper à jsonplaceholder.typicode.com et qui **simule** une persistance des données.
 
-```bash
-ng generate component component-name
-```
+Le tout est hébergé sur Vercel à l’URL suivante :  
+👉 [https://tiime-test.vercel.app/](https://tiime-test.vercel.app/)
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+---
 
-```bash
-ng generate --help
-```
+## ✨ Améliorations possibles
 
-## Building
+1. Pagination  
+2. Filtres  
+3. Tri
+4. Meilleure UI/UX  
+5. Tests
 
-To build the project run:
+Pour les points 1, 2 et 3, le test se concentrait sur le Front. Connaissant les limitations de jsonplaceholder.typicode.com (qui n’offre aucune de ces trois fonctionnalités), si j’avais dû les développer, la majeure partie de la logique aurait été côté serveur. C’est pour cela que je ne les ai pas implémentés.
 
-```bash
-ng build
-```
+Pour les points 4 et 5, c'état pour ne pas passer plus de temps sur le test et surtout parce que je pense que l'UI / UX sont correctes même si ce n'est pas exceptionel.
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+---
 
-## Running unit tests
+## ⚙️ Mise en place
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+### Option 1
 
-```bash
-ng test
-```
+Accédez à l’application ici :  
+👉 [https://tiime-test.vercel.app/](https://tiime-test.vercel.app/)
 
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
+### Option 2
 
 ```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+git clone https://github.com/Mickael45/Tiime-test.git
+cd tiime-test
+npm install
+npm start
