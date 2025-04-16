@@ -2,14 +2,37 @@
     "version": 2,
     "builds": [
         {
+            "src": "package.json",
+            "use": "@vercel/static-build",
+            "config": {
+                "distDir": "dist/tiime-test/browser"
+            }
+        },
+        {
             "src": "api/index.js",
             "use": "@vercel/node"
         }
     ],
     "routes": [
         {
-            "src": "^/(.*)$",
+            "src": "/users",
             "dest": "/api/index.js"
+        },
+        {
+            "src": "/users/(.*)",
+            "dest": "/api/index.js"
+        },
+        {
+            "src": "/api/(.*)",
+            "dest": "/api/index.js"
+        },
+        {
+            "src": "/(.*)\\.(js|css|ico|png|jpg|svg|webp)",
+            "dest": "/$1.$2"
+        },
+        {
+            "src": "/(.*)",
+            "dest": "/index.html"
         }
     ]
 }

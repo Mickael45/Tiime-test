@@ -1,141 +1,300 @@
-// server.js (Express version)
+// server.js
 const express = require("express");
-const fs = require("fs").promises;
-const path = require("path");
 const cors = require("cors");
 
-const usersFilePath = path.join(__dirname, "users.json");
 const PORT = process.env.PORT || 3000;
 const JSONPLACEHOLDER_API = "https://jsonplaceholder.typicode.com";
 
 const app = express();
 
-// Middleware to enable CORS
 app.use(cors());
-
-// Middleware to parse JSON request bodies
 app.use(express.json());
 
-// --- Data Persistence Helpers ---
-
-// In-memory cache of users to avoid reading the file on every request
-let usersCache = [];
-
-// Function to read users from the JSON file
-async function readUsers() {
-  try {
-    // Check if file exists, create if not
-    try {
-      await fs.access(usersFilePath);
-    } catch (error) {
-      if (error.code === "ENOENT") {
-        console.log("users.json not found, creating empty file.");
-        await fs.writeFile(usersFilePath, "[]", "utf8");
-      } else {
-        throw error; // Re-throw other access errors
-      }
-    }
-    const data = await fs.readFile(usersFilePath, "utf8");
-    usersCache = JSON.parse(data);
-    // Ensure it's always an array
-    if (!Array.isArray(usersCache)) {
-      console.warn(
-        "users.json did not contain a valid array. Resetting to []."
-      );
-      usersCache = [];
-      await writeUsers(); // Write back the empty array
-    }
-    return usersCache;
-  } catch (err) {
-    console.error("Error reading users file:", err);
-    // If reading fails critically, maybe default to an empty array in memory
-    usersCache = [];
-    return usersCache;
-    // Or throw an error to stop the server if preferred
-    // throw new Error("Could not read user data file.");
-  }
-}
-
-// Function to write users back to the JSON file
-async function writeUsers() {
-  try {
-    await fs.writeFile(
-      usersFilePath,
-      JSON.stringify(usersCache, null, 2),
-      "utf8"
-    ); // Pretty print JSON
-  } catch (err) {
-    console.error("Error writing users file:", err);
-    throw new Error("Could not write user data file."); // Propagate error
-  }
-}
+// --- In-memory cache only ---
+let usersCache = [
+  {
+    id: 1,
+    name: "Leanne Graham",
+    username: "Bret",
+    email: "Sincere@april.biz",
+    address: {
+      street: "Kulas Light",
+      suite: "Apt. 556",
+      city: "Gwenborough",
+      zipcode: "92998-3874",
+      geo: {
+        lat: "-37.3159",
+        lng: "81.1496",
+      },
+    },
+    phone: "1-770-736-8031 x56442",
+    website: "hildegard.org",
+    company: {
+      name: "Romaguera-Crona",
+      catchPhrase: "Multi-layered client-server neural-net",
+      bs: "harness real-time e-markets",
+    },
+  },
+  {
+    id: 2,
+    name: "Ervin Howell",
+    username: "Antonette",
+    email: "Shanna@melissa.tv",
+    address: {
+      street: "Victor Plains",
+      suite: "Suite 879",
+      city: "Wisokyburgh",
+      zipcode: "90566-7771",
+      geo: {
+        lat: "-43.9509",
+        lng: "-34.4618",
+      },
+    },
+    phone: "",
+    website: "",
+    company: {
+      name: "Deckow-Crist",
+      catchPhrase: "Proactive didactic contingency",
+      bs: "synergize scalable supply-chains",
+    },
+  },
+  {
+    id: 3,
+    name: "Clementine Bauch",
+    username: "Samantha",
+    email: "Nathan@yesenia.net",
+    address: {
+      street: "Douglas Extension",
+      suite: "Suite 847",
+      city: "McKenziehaven",
+      zipcode: "59590-4157",
+      geo: {
+        lat: "-68.6102",
+        lng: "-47.0653",
+      },
+    },
+    phone: "1-463-123-4447",
+    website: "ramiro.info",
+    company: {
+      name: "Romaguera-Jacobson",
+      catchPhrase: "Face to face bifurcated interface",
+      bs: "e-enable strategic applications",
+    },
+  },
+  {
+    id: 4,
+    name: "Patricia Lebsack",
+    username: "Karianne",
+    email: "Julianne.OConner@kory.org",
+    address: {
+      street: "Hoeger Mall",
+      suite: "Apt. 692",
+      city: "South Elvis",
+      zipcode: "53919-4257",
+      geo: {
+        lat: "29.4572",
+        lng: "-164.2990",
+      },
+    },
+    phone: "493-170-9623 x156",
+    website: "kale.biz",
+    company: {
+      name: "Robel-Corkery",
+      catchPhrase: "Multi-tiered zero tolerance productivity",
+      bs: "transition cutting-edge web services",
+    },
+  },
+  {
+    id: 5,
+    name: "Chelsey Dietrich",
+    username: "Kamren",
+    email: "Lucio_Hettinger@annie.ca",
+    address: {
+      street: "Skiles Walks",
+      suite: "Suite 351",
+      city: "Roscoeview",
+      zipcode: "33263",
+      geo: {
+        lat: "-31.8129",
+        lng: "62.5342",
+      },
+    },
+    phone: "(254)954-1289",
+    website: "demarco.info",
+    company: {
+      name: "Keebler LLC",
+      catchPhrase: "User-centric fault-tolerant solution",
+      bs: "revolutionize end-to-end systems",
+    },
+  },
+  {
+    id: 6,
+    name: "Mrs. Dennis Schulist",
+    username: "Leopoldo_Corkery",
+    email: "Karley_Dach@jasper.info",
+    address: {
+      street: "Norberto Crossing",
+      suite: "Apt. 950",
+      city: "South Christy",
+      zipcode: "23505-1337",
+      geo: {
+        lat: "-71.4197",
+        lng: "71.7478",
+      },
+    },
+    phone: "1-477-935-8478 x6430",
+    website: "ola.org",
+    company: {
+      name: "Considine-Lockman",
+      catchPhrase: "Synchronised bottom-line interface",
+      bs: "e-enable innovative applications",
+    },
+  },
+  {
+    id: 7,
+    name: "Kurtis Weissnat",
+    username: "Elwyn.Skiles",
+    email: "Telly.Hoeger@billy.biz",
+    address: {
+      street: "Rex Trail",
+      suite: "Suite 280",
+      city: "Howemouth",
+      zipcode: "58804-1099",
+      geo: {
+        lat: "24.8918",
+        lng: "21.8984",
+      },
+    },
+    phone: "210.067.6132",
+    website: "elvis.io",
+    company: {
+      name: "Johns Group",
+      catchPhrase: "Configurable multimedia task-force",
+      bs: "generate enterprise e-tailers",
+    },
+  },
+  {
+    id: 8,
+    name: "Nicholas Runolfsdottir V",
+    username: "Maxime_Nienow",
+    email: "Sherwood@rosamond.me",
+    address: {
+      street: "Ellsworth Summit",
+      suite: "Suite 729",
+      city: "Aliyaview",
+      zipcode: "45169",
+      geo: {
+        lat: "-14.3990",
+        lng: "-120.7677",
+      },
+    },
+    phone: "586.493.6943 x140",
+    website: "jacynthe.com",
+    company: {
+      name: "Abernathy Group",
+      catchPhrase: "Implemented secondary concept",
+      bs: "e-enable extensible e-tailers",
+    },
+  },
+  {
+    id: 9,
+    name: "Glenna Reichert",
+    username: "Delphine",
+    email: "Chaim_McDermott@dana.io",
+    address: {
+      street: "Dayna Park",
+      suite: "Suite 449",
+      city: "Bartholomebury",
+      zipcode: "76495-3109",
+      geo: {
+        lat: "24.6463",
+        lng: "-168.8889",
+      },
+    },
+    phone: "(775)976-6794 x41206",
+    website: "conrad.com",
+    company: {
+      name: "Yost and Sons",
+      catchPhrase: "Switchable contextually-based project",
+      bs: "aggregate real-time technologies",
+    },
+  },
+  {
+    id: 10,
+    name: "Clementina DuBuque",
+    username: "Moriah.Stanton",
+    email: "Rey.Padberg@karina.biz",
+    address: {
+      street: "Kattie Turnpike",
+      suite: "Suite 198",
+      city: "Lebsackbury",
+      zipcode: "31428-2261",
+      geo: {
+        lat: "-38.2386",
+        lng: "57.2232",
+      },
+    },
+    phone: "024-648-3804",
+    website: "ambrose.net",
+    company: {
+      name: "Hoeger LLC",
+      catchPhrase: "Centralized empowering task-force",
+      bs: "target end-to-end models",
+    },
+  },
+];
 
 // --- Route Handlers ---
 
-// Route: GET /users
+// GET /users
 app.get("/users", (req, res) => {
-  console.log(`Received request: GET /users`);
-  res.status(200).json(usersCache); // Send cached users
+  console.log(`🟢 GET /users`);
+  res.status(200).json(usersCache);
 });
 
-// Route: GET /user/:id
+// GET /users/:id
 app.get("/users/:id", (req, res) => {
   const id = parseInt(req.params.id, 10);
-  console.log(`Received request: GET /user/${id}`);
   const user = usersCache.find((u) => u.id === id);
+  console.log(`🟢 GET /users/${id}`);
+
   if (user) {
     res.status(200).json(user);
   } else {
-    res.status(404).json({ message: `User with ID ${id} not found locally` });
+    res.status(404).json({ message: `User with ID ${id} not found.` });
   }
 });
 
-// Route: POST /user
-app.post("/users", async (req, res) => {
-  console.log(`Received request: POST /user`);
+// POST /users
+app.post("/users", (req, res) => {
+  console.log("🟢 POST /users");
   const newUser = req.body;
 
-  // Basic validation
   if (!newUser || typeof newUser !== "object" || Array.isArray(newUser)) {
     return res
       .status(400)
       .json({ message: "Invalid user data format in request body." });
   }
-  // Check if required fields are present (optional, add as needed)
-  // if (!newUser.name || !newUser.email) {
-  //     return res.status(400).json({ message: 'Missing required fields (e.g., name, email).' });
-  // }
 
-  // Generate a new unique ID
   const maxId = usersCache.reduce((max, u) => (u.id > max ? u.id : max), 0);
   newUser.id = maxId + 1;
 
-  // Add to cache and write to file
   usersCache.push(newUser);
-  try {
-    await writeUsers();
-    res.status(201).json(newUser); // 201 Created
-  } catch (error) {
-    console.error("Error writing user:", error);
-    res.status(500).json({ message: "Failed to save new user." });
-  }
+  res.status(201).json(newUser);
 });
 
-// Route: PUT /user/:id
-app.put("/users/:id", async (req, res) => {
+// PUT /users/:id
+app.put("/users/:id", (req, res) => {
   const id = parseInt(req.params.id, 10);
-  console.log(`Received request: PUT /user/${id}`);
   const userIndex = usersCache.findIndex((u) => u.id === id);
 
+  console.log(`🟢 PUT /users/${id}`);
+
   if (userIndex === -1) {
-    return res
-      .status(404)
-      .json({ message: `User with ID ${id} not found locally for update` });
+    return res.status(404).json({ message: `User with ID ${id} not found.` });
   }
 
   const updatedData = req.body;
-
-  // Basic validation
   if (
     !updatedData ||
     typeof updatedData !== "object" ||
@@ -146,111 +305,59 @@ app.put("/users/:id", async (req, res) => {
       .json({ message: "Invalid user data format in request body." });
   }
 
-  // Merge updated data - ensure ID remains the same
-  usersCache[userIndex] = { ...usersCache[userIndex], ...updatedData, id: id };
-
-  // Write changes to file
-  try {
-    await writeUsers();
-    res.status(200).json(usersCache[userIndex]);
-  } catch (error) {
-    console.error("Error updating user:", error);
-    res.status(500).json({ message: "Failed to update user." });
-  }
+  usersCache[userIndex] = { ...usersCache[userIndex], ...updatedData, id };
+  res.status(200).json(usersCache[userIndex]);
 });
 
-// Route: GET /user/:id/posts
+// GET /users/:id/posts
 app.get("/users/:id/posts", async (req, res) => {
   const id = parseInt(req.params.id, 10);
-  console.log(`Received request: GET /user/${id}/posts`);
+  console.log(`🟢 GET /users/${id}/posts`);
+
   const url = `${JSONPLACEHOLDER_API}/users/${id}/posts`;
 
-  console.log(`Workspaceing posts from: ${url}`);
   try {
-    // Use native fetch (available in Node 18+)
     const response = await fetch(url);
 
     if (response.ok) {
-      // Status code 200-299
       const posts = await response.json();
-      res.status(200).json(posts);
+      return res.status(200).json(posts);
     } else if (response.status === 404) {
-      console.log(
-        `User ${id} not found on JSONPlaceholder. Checking local storage...`
-      );
-      // JSONPlaceholder returned 404, check if user exists locally
-      const localUserExists = usersCache.some((u) => u.id === id);
-      if (localUserExists) {
-        console.log(`User ${id} found locally. Returning empty posts array.`);
-        // User exists locally, but no posts on placeholder - return empty array
-        res.status(200).json([]);
-      } else {
-        console.log(`User ${id} not found locally either.`);
-        // User not found locally either, return 404
-        res.status(404).json({
-          message: `User with ID ${id} not found locally or on JSONPlaceholder`,
-        });
-      }
+      const existsLocally = usersCache.some((u) => u.id === id);
+      return existsLocally
+        ? res.status(200).json([])
+        : res
+            .status(404)
+            .json({
+              message: `User with ID ${id} not found locally or remotely`,
+            });
     } else {
-      // Other error from JSONPlaceholder
-      console.error(
-        `JSONPlaceholder request failed: ${response.status} ${response.statusText}`
-      );
-      res
+      return res
         .status(response.status)
-        .json({ message: `Failed to fetch posts: ${response.statusText}` });
+        .json({ message: `Failed to fetch posts from API` });
     }
-  } catch (fetchError) {
-    console.error("Error fetching posts:", fetchError);
-    // Check local existence even on fetch network errors
-    const localUserExists = usersCache.some((u) => u.id === id);
-    if (localUserExists) {
-      console.log(
-        `Workspace failed, but User ${id} found locally. Returning empty posts array.`
-      );
-      // Return empty array if user exists locally but fetch failed
-      res.status(200).json([]);
-    } else {
-      console.log(`Workspace failed and User ${id} not found locally either.`);
-      res
-        .status(500)
-        .json({ message: "Failed to fetch posts and user not found locally" });
-    }
+  } catch (err) {
+    console.error("❌ Error fetching posts:", err);
+    const existsLocally = usersCache.some((u) => u.id === id);
+    return existsLocally
+      ? res.status(200).json([])
+      : res.status(500).json({
+          message: "Failed to fetch posts and user not found locally.",
+        });
   }
 });
 
-// Route: Not Found
+// Fallback 404
 app.use((req, res) => {
-  console.log(`Received request: ${req.method} ${req.path} - Route not found`);
+  console.log(`🔴 ${req.method} ${req.path} - Not Found`);
   res.status(404).json({ message: "Route not found" });
 });
 
-// --- Start Server ---
-
-// Load initial data before starting the server
-readUsers()
-  .then(() => {
-    app.listen(PORT, () => {
-      console.log(`Server running on http://localhost:${PORT}`);
-      console.log(`User data will be persisted in: ${usersFilePath}`);
-    });
-  })
-  .catch((err) => {
-    console.error("Failed to initialize server:", err);
-    process.exit(1); // Exit if we can't load initial data
+// Start server (local only — not used on Vercel)
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`Server running at http://localhost:${PORT}`);
   });
-
-// Optional: Handle graceful shutdown to ensure data is written
-process.on("SIGINT", async () => {
-  console.log("\nCaught interrupt signal, writing data before exit...");
-  try {
-    await writeUsers(); // Ensure latest cache is written
-    console.log("Data saved successfully.");
-    process.exit(0);
-  } catch (err) {
-    console.error("Failed to save data on exit:", err);
-    process.exit(1);
-  }
-});
+}
 
 module.exports = app;
