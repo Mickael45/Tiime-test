@@ -30,9 +30,9 @@ Le tout est hébergé sur Vercel et accéssible par l’URL suivante :
 4. **Meilleure UI/UX**
 5. **Tests**
 
-Pour les points 1, 2 et 3, le test se concentrait sur le Front. Connaissant les limitations de jsonplaceholder.typicode.com (qui n’offre aucune de ces trois fonctionnalités), si j’avais dû les développer, la majeure partie de la logique aurait été côté serveur. C’est pour cela que je ne les ai pas implémentés.
+Pour les points **1, 2 et 3**, le test se concentrait sur le Front. Connaissant les limitations de jsonplaceholder.typicode.com (qui n’offre aucune de ces trois fonctionnalités), si j’avais dû les développer, la majeure partie de la logique aurait été côté serveur. C’est pour cela que je ne les ai pas implémentés.
 
-Pour les points 4 et 5, c'état pour ne pas passer plus de temps sur le test et surtout parce que je pense que l'UI / UX sont correctes même si ce n'est pas exceptionel.
+Pour les points **4 et 5**, c'état pour ne pas passer plus de temps sur le test et surtout parce que je pense que l'UI / UX sont correctes même si ce n'est pas exceptionel.
 
 ---
 
