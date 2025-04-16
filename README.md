@@ -2,9 +2,12 @@
 
 ## 🛠️ Outils utilisés
 
-**Tailwind** : Pendant mon call avec Sullivan, il a mentionné que vous utilisiez Tailwind, donc c’est ce que j’ai utilisé pour le projet.
+- **Angular CLI**
+- **npm**
+- **Tailwind**
+- **Vercel**
 
-Le reste a été fait à la main, sans bibliothèques externes.
+Pendant mon call avec Sullivan, il a mentionné que vous utilisiez Tailwind, donc c’est ce que j’ai utilisé pour le projet. Le reste a été fait à la main, sans libs externes.
 
 ---
 
@@ -14,7 +17,7 @@ L’API proposée par [jsonplaceholder.typicode.com](https://jsonplaceholder.typ
 
 Pour pallier ça, j’ai créé un petit serveur Express qui sert de wrapper à jsonplaceholder.typicode.com et qui **simule** une persistance des données.
 
-Le tout est hébergé sur Vercel à l’URL suivante :  
+Le tout est hébergé sur Vercel et accéssible par l’URL suivante :  
 👉 [https://tiime-test.vercel.app/](https://tiime-test.vercel.app/)
 
 ---
@@ -47,3 +50,15 @@ git clone https://github.com/Mickael45/Tiime-test.git
 cd tiime-test
 npm install
 npm start
+```
+
+Ensuite visitez la page: http://localhost:4200/
+
+### 📌 Remarque
+
+Attention au port, si le 4200 est déjà utilisé par une autre app celui qui vous sera proposé pour celle-ci sera différent.
+Pour savoir quel port utiliser, jetez un oeil à l'output de la commande **npm start**. L'url à utiliser y est.
+
+**Example:**
+
+<img width="606" alt="Screenshot 2025-04-16 at 13 26 34" src="https://github.com/user-attachments/assets/1fe1dbf7-5d4d-4a65-8d88-b26209fbb9da" />
