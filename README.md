@@ -24,11 +24,11 @@ Le tout est hébergé sur Vercel et accéssible par l’URL suivante :
 
 ## ✨ Améliorations possibles
 
-1. Pagination  
-2. Filtres  
-3. Tri
-4. Meilleure UI/UX  
-5. Tests
+1. **Pagination**  
+2. **Filtres**  
+3. **Tri**
+4. **Meilleure UI/UX**
+5. **Tests**
 
 Pour les points 1, 2 et 3, le test se concentrait sur le Front. Connaissant les limitations de jsonplaceholder.typicode.com (qui n’offre aucune de ces trois fonctionnalités), si j’avais dû les développer, la majeure partie de la logique aurait été côté serveur. C’est pour cela que je ne les ai pas implémentés.
 
